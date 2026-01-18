@@ -15,7 +15,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -77,13 +76,6 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://celadon-platypus-83c9b4.netlify.app", "http://localhost:5173"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Content-Type", "X-User-ID"},
-		AllowCredentials: true,
-		MaxAge:           300,
-	}))
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
