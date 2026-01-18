@@ -78,10 +78,11 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders: []string{"Content-Type"},
-		MaxAge:         300,
+		AllowedOrigins:   []string{"https://celadon-platypus-83c9b4.netlify.app", "http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "X-User-ID"},
+		AllowCredentials: true,
+		MaxAge:           300,
 	}))
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
