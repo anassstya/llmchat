@@ -28,9 +28,14 @@ func NewChatHandler(chatService *services.ChatService) *ChatHandler {
 	}
 }
 func (h *ChatHandler) HandleChatMessage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "https://celadon-platypus-83c9b4.netlify.app")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-User-ID")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
 
 	if r.Method != http.MethodPost && r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -80,6 +85,15 @@ func (h *ChatHandler) HandleChatMessage(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *ChatHandler) HandleChatHistory(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "https://celadon-platypus-83c9b4.netlify.app")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-User-ID")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	userIDStr := r.Header.Get("X-User-ID")
 	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil || userID <= 0 {
