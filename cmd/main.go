@@ -15,6 +15,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -74,8 +75,23 @@ func main() {
 	chatHandler := handlers.NewChatHandler(chatService)
 
 	r := chi.NewRouter()
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{
+			"https://celadon-platypus-83c9b4.netlify.app",
+		},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
+	r.Options("/api/auth/register", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
+	r.Options("/api/auth/login", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
+	r.Options("/api/chat/message", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
@@ -88,8 +104,8 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr: ":" + port,
-		// ...
+		Addr:    ":" + port,
+		Handler: r,
 	}
 
 	log.Fatal(srv.ListenAndServe())
