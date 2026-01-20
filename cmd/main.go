@@ -81,7 +81,7 @@ func main() {
 			"https://celadon-platypus-83c9b4.netlify.app",
 		},
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-User-ID"},
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
@@ -92,12 +92,13 @@ func main() {
 	r.Options("/api/auth/register", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 	r.Options("/api/auth/login", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 	r.Options("/api/chat/message", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
+	r.Options("/api/chat/history", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
-	r.Get("/api/chat/message", chatHandler.HandleChatMessage)
-	r.Post("/api/chat/message", chatHandler.HandleChatMessage)
 
+	r.Get("/api/chat/message", chatHandler.HandleChatMessage)
+	r.Get("/api/chat/history", chatHandler.HandleChatHistory)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8050"
