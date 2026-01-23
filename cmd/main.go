@@ -89,11 +89,6 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Options("/api/auth/register", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-	r.Options("/api/auth/login", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-	r.Options("/api/chat/message", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-	r.Options("/api/chat/history", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
-
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
 
