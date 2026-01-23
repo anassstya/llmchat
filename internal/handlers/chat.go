@@ -27,12 +27,8 @@ func (h *ChatHandler) HandleChatMessage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// SSE headers
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
-
 	userIDStr := r.Header.Get("X-User-ID")
+
 	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil || userID <= 0 {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -51,6 +47,10 @@ func (h *ChatHandler) HandleChatMessage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
 	onChunk := func(text string) error {
 		b, _ := json.Marshal(map[string]string{"delta": text})
 		_, err := fmt.Fprintf(w, "data: %s\n\n", b)
@@ -63,6 +63,9 @@ func (h *ChatHandler) HandleChatMessage(w http.ResponseWriter, r *http.Request) 
 
 	if err := h.chatService.ChatStream(r.Context(), userID, message, onChunk); err != nil {
 		log.Printf("chat error: user=%d, msg=%q, err=%v", userID, message, err)
+		errData, _ := json.Marshal(map[string]string{"error": "Failed to process chat"})
+		fmt.Fprintf(w, "data: %s\n\n", errData)
+		flusher.Flush()
 		return
 	}
 
@@ -83,7 +86,7 @@ func (h *ChatHandler) HandleChatHistory(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	history, err := h.chatService.Repo.GetHistory(r.Context(), userID)
+	history, err := h.chatService.GetHistory(r.Context(), userID)
 	if err != nil {
 		log.Printf("history error: user=%d, err=%v", userID, err)
 		http.Error(w, "Failed to load history", http.StatusInternalServerError)
