@@ -78,7 +78,7 @@ func main() {
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
-			"https://celadon-platypus-83c9b4.netlify.app",
+			"https://697725e6c7c59a61dbe053fc--bejewelled-mandazi-a92c0c.netlify.app",
 		},
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-User-ID"},
