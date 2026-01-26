@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"llm-chat-backend/internal/repository"
+	"log"
 	"strings"
 )
 
@@ -19,12 +20,17 @@ func NewChatService(repo repository.ChatRepository, llm *LLMService) *ChatServic
 }
 
 func (s *ChatService) ChatStream(ctx context.Context, userID int64, message string, onChunk func(string) error) error {
+	log.Printf("[ChatStream] Start: userID=%d, message=%q", userID, message)
+
 	if err := s.Repo.SaveMessage(ctx, userID, "user", message); err != nil {
 		return err
 	}
 
+	log.Println("[ChatStream] User message saved")
+
 	history, err := s.Repo.GetHistory(ctx, userID)
 	if err != nil {
+		log.Printf("[ChatStream] GetHistory error: %v", err)
 		return err
 	}
 

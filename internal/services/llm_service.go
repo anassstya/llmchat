@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"llm-chat-backend/internal/repository"
+	"log"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -29,6 +30,8 @@ func NewLLMService(apiKey string) (*LLMService, error) {
 	if apiKey == "" {
 		return nil, errors.New("API key is empty")
 	}
+
+	log.Printf("[LLM] Initializing with HuggingFace, key: %s...", apiKey[:10])
 
 	config := openai.DefaultConfig(apiKey)
 	config.BaseURL = "https://router.huggingface.co/v1"

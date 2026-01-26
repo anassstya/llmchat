@@ -56,7 +56,8 @@ func (c *PostgresChatRepo) GetHistory(ctx context.Context, userID int64) ([]Mess
 	}
 	defer rows.Close()
 
-	var messages []Message
+	messages := []Message{}
+
 	for rows.Next() {
 		var m Message
 		if err := rows.Scan(&m.ID, &m.Role, &m.Content, &m.CreatedAt); err != nil {
