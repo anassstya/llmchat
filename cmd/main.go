@@ -76,6 +76,9 @@ func main() {
 
 	r := chi.NewRouter()
 
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
 			"https://bejewelled-mandazi-a92c0c.netlify.app",
@@ -85,9 +88,6 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
-
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
