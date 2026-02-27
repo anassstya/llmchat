@@ -89,6 +89,18 @@ func main() {
 		MaxAge:           300,
 	}))
 
+	r.Route("/api", func(r chi.Router) {
+		r.Post("/auth/register", authHandler.HandleRegister)
+		r.Post("/auth/login", authHandler.HandleLogin)
+		r.Get("/chat/message", chatHandler.HandleChatMessage)
+		r.Get("/chat/history", chatHandler.HandleChatHistory)
+	})
+
+	// Обработка preflight OPTIONS для любых путей
+	r.Options("/*", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
 
