@@ -76,6 +76,10 @@ func main() {
 
 	r := chi.NewRouter()
 
+	r.Options("/*", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
 			"https://bejewelled-mandazi-a92c0c.netlify.app",
@@ -96,7 +100,7 @@ func main() {
 	r.Get("/api/chat/history", chatHandler.HandleChatHistory)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8050"
+		port = "8080"
 	}
 
 	srv := &http.Server{
