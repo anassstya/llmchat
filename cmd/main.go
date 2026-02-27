@@ -86,12 +86,12 @@ func main() {
 		MaxAge:           300,
 	}))
 
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
 	r.Options("/*", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
-
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 
 	r.Post("/api/auth/register", authHandler.HandleRegister)
 	r.Post("/api/auth/login", authHandler.HandleLogin)
